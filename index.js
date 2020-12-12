@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const cTable = require('console.table');
+require('console.table');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -90,17 +90,18 @@ const rolesTable = () => {
     connection.query(`SELECT id AS 'ID', title AS 'Title', department_id AS 'Dept ID', salary AS 'Salary' FROM roles`,
         function(err, results, fields) {
             if (err) throw err;
-            console.table(results , '\n');
+            console.table(results);
             questionPrompt();
         })
 };
 
 const employeeTable = () => {
     const query = `
-    SELECT employee.id AS "ID", employee.first_name AS 'First Name', employee.last_name AS 'Last Name', roles.title AS 'Title', roles.salary AS 'Salary', employee.manager_id AS 'Manager ID',departments.dept_name AS 'Department'
+    SELECT employee.id AS "ID", employee.first_name AS 'First Name', employee.last_name AS 'Last Name', roles.title AS 'Title', roles.salary AS 'Salary', manager.name AS Manager, departments.dept_name AS 'Department'
     FROM employee
     LEFT JOIN roles ON employee.role_id = roles.id
-    LEFT JOIN departments ON roles.department_id = departments.id`;
+    LEFT JOIN departments ON roles.department_id = departments.id
+    LEFT JOIN manager ON employee.manager_id = manager.id`;
     connection.query(query,
         function(err,results,fields) {
             if (err) throw err;
@@ -109,6 +110,6 @@ const employeeTable = () => {
         })
 };
 
-const exit = () => {
+function exit() {
     connection.end();
 }
