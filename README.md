@@ -1,5 +1,5 @@
-# Employee Tracker
 
+![Image](./images/logo.jpeg)
  ![NPM](https://img.shields.io/badge/Mozilla-License-orange)
 
   ## Description
