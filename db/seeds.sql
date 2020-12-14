@@ -22,24 +22,13 @@ VALUES
   ('MFG-Manager', 70000, 5),
   ('MFG-Analyst', 40000, 5);
 
--- INSERT INTO manager (name)
--- VALUES
---   ('A K1'),
---   ('A K2');
-
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-  ('Anthony1', 'Kieu1', 1, null),
-  ('Anthony2', 'Kieu2', 2, 1),
-  ('Anthony3', 'Kieu3', 3, 2),
-  ('Anthony4', 'Kieu4', 4, 1),
-  ('Anthony5', 'Kieu5', 5, 2),
-  ('Anthony6', 'Kieu6', 6, 1),
-  ('Anthony7', 'Kieu7', 7, 2),
-  ('Anthony8', 'Kieu8', 8, 1),
-  ('Anthony9', 'Kieu9', 9, 2),
-  ('Anthony10', 'Kieu10', 10, 1),
-  ('Anthony11', 'Kieu11', 11, 2),
-  ('Anthony12', 'Kieu12', 12, 1); 
+  ('Tony', 'Stark', 9, 2),
+  ('Nick', 'Fury', 1, null),
+  ('Steve', 'Rogers', 3, 2),
+  ('Thor', 'Demi-god', 7, 2),
+  ('Black', 'Widow', 5, 2),
+  ('The', 'Hulk', 1, 11); 
 
 

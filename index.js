@@ -40,7 +40,7 @@ const questionPrompt = () => {
                     'Add a New Role',
                     'Add New Employee',
                     new inquirer.Separator(),
-                    'Update Employee Information',
+                    'Update Employee Role',
                     'Exit'
                 ],
             }
@@ -61,8 +61,6 @@ const questionPrompt = () => {
 
                 case 'Add a New Department':
                     addDept();
-                    // const departmentInfo = await getDepartmentInfo();
-                    // await addDepartment(departmentInfo);
                     break;
 
                 case 'Add a New Role':
@@ -76,8 +74,10 @@ const questionPrompt = () => {
                     setTimeout(addEmployee, 500);
                     break;
 
-                case 'Update Employee Information':
-                    updateEmployee();
+                case 'Update Employee Role':
+                    getRole();
+                    getEmployee();
+                    setTimeout(updateEmployee, 500);
                     break;
 
                 case 'Exit':
@@ -97,7 +97,7 @@ const departmentTable = () => {
 };
 
 const rolesTable = () => {
-    connection.query(`SELECT id AS 'ID', title AS 'Title', department_id AS 'Dept ID', salary AS 'Salary' FROM roles`,
+    connection.query(`SELECT roles.id AS 'ID', roles.title AS 'Title', departments.dept_name AS 'Deparment', salary AS 'Salary' FROM roles LEFT JOIN departments ON roles.department_id = departments.id`,
         function (err, results, fields) {
             if (err) throw err;
             console.table(results);
@@ -141,6 +141,18 @@ const addDept = () => {
         })
 };
 
+const getEmployee = () => {
+    const query = 'SELECT employee.id AS "id", last_name, first_name, role_id, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id';
+    
+    connection.query(query,
+        function (err, results, fields) {
+            if (err) throw err;
+
+            results.forEach(employee => {
+                employeeArray.push({ id: employee.id, name: `${employee.first_name} ${employee.last_name}`, role_id: employee.role_id, jobTitle: employee.title });
+            })
+        });
+};
 
 const getManager = () => {
     const query = 'SELECT employee.id AS "id", last_name, first_name, role_id, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id WHERE title LIKE "%Manager%"';
@@ -152,7 +164,6 @@ const getManager = () => {
             results.forEach(employee => {
                 managerArray.push({ id: employee.id, name: `${employee.first_name} ${employee.last_name}`, role_id: employee.role_id, jobTitle: employee.title });
             })
-            console.log('managerArray :', managerArray);
         });
 };
 
@@ -165,7 +176,6 @@ const getRole = () => {
             results.forEach(roles => {
                 roleArray.push({ id: roles.id, title: roles.title, salary: roles.salary });
             })
-            console.log('roleArray :', roleArray);
         });
 };
 
@@ -212,11 +222,9 @@ const addRole = () => {
                 },
                 function (err, res, fields) {
                     if (err) throw err;
-                    // console.log(res.affectedRows);
                     questionPrompt();
                 })
-            console.log(query.sql);
-        })
+        });
 };
 
 const addEmployee = () => {
@@ -257,12 +265,46 @@ const addEmployee = () => {
                 },
                 function (err, res, fields) {
                     if (err) throw err;
-                    // console.log(res.affectedRows);
                     questionPrompt();
                 })
-            console.log(query.sql);
-        })
-}
+        });
+};
+
+const updateEmployee = () => {
+    inquirer
+        .prompt([
+            {
+                name: 'selectEmployee',
+                type: 'list',
+                message: 'Whose role would you like to change? ',
+                choices: employeeArray.map(employee => employee.name),
+            },
+            {
+                name: 'updateRole',
+                type: 'list',
+                message: 'What is their new role?',
+                choices: roleArray.map(role => role.title),
+            },
+        ])
+        .then(answer => {
+            let roleId = roleArray.filter(role => role.title === answer.updateRole);
+            let employeeId = employeeArray.filter(employee => employee.name === answer.selectEmployee);
+            const query = connection.query('UPDATE employee SET ? WHERE ?',
+            [   
+            {    
+                    role_id: roleId[0].id,
+            },
+            {
+                    id: employeeId[0].id,
+                }
+            ],
+                function (err, res, fields) {
+                    if (err) throw err;
+                    questionPrompt();
+                }
+            )
+        });
+};
 
 function exit() {
     connection.end();
