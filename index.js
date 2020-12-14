@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 require('console.table');
+const logo = require('asciiart-logo');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -17,6 +18,19 @@ connection.connect(err => {
     console.log('connected as id ' + connection.threadId + '\n');
     questionPrompt();
 });
+
+console.log(
+    logo({
+        name: 'THE Employee Tracker',
+        font: 'ANSI Shadow',
+        lineChars: 15,
+        padding: 2,
+        margin: 2,
+        borderColor: 'white',
+        logoColor: 'white',
+    })
+    .render()
+);
 
 let departmentArray = [];
 let employeeArray = [];
